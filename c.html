@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>청소 현황</title>
   <style>
     body {
       margin: 0;
@@ -12,36 +13,49 @@
     }
 
     .wrap {
-      max-width: 420px;
+      max-width: 430px;
       margin: 0 auto;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
     }
 
     td {
-      border: 1px solid #ccc;
+      border: 1px solid #cfcfcf;
       text-align: center;
-      padding: 10px 6px;
+      padding: 12px 10px;
       font-size: 18px;
-      word-break: keep-all;
+      white-space: nowrap;
     }
 
-    .title {
-      font-size: 22px;
-      font-weight: bold;
-      padding: 14px 8px;
+    .date {
+      width: 130px;
+      font-size: 16px;
     }
 
     .count {
-      font-size: 32px;
-      font-weight: bold;
+      width: 60px;
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    .label {
+      width: 70px;
+      font-size: 16px;
+      font-weight: 600;
     }
 
     .emoji {
+      width: 60px;
       font-size: 34px;
     }
 
@@ -50,20 +64,36 @@
         padding: 8px;
       }
 
-      td {
-        font-size: 16px;
-        padding: 8px 4px;
+      .wrap {
+        max-width: 360px;
       }
 
       .title {
         font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      td {
+        padding: 10px 6px;
+      }
+
+      .date {
+        width: 118px;
+        font-size: 14px;
       }
 
       .count {
-        font-size: 28px;
+        width: 52px;
+        font-size: 34px;
+      }
+
+      .label {
+        width: 58px;
+        font-size: 15px;
       }
 
       .emoji {
+        width: 52px;
         font-size: 30px;
       }
     }
@@ -71,6 +101,7 @@
 </head>
 <body>
   <div class="wrap">
+    <div class="title">Oneminute 청소 스케줄</div>
     <table id="sheetTable"></table>
   </div>
 
@@ -78,11 +109,14 @@
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5USKZK-uEC6ayiKOzSLU9cCu-Mka_irBI-ihD5wJ3f7TNl9j_wDF4N1Wv63qbJNBGDoXQhC1Lf6ZG/pub?output=csv";
 
     fetch(sheetUrl)
-      .then(res => res.text())
+      .then(response => response.text())
       .then(csv => {
-        const rows = csv.trim().split("\n").map(row =>
-          row.split(",").map(cell => cell.replace(/^"|"$/g, "").trim())
-        );
+        const rows = csv
+          .trim()
+          .split("\n")
+          .map(row =>
+            row.split(",").map(cell => cell.replace(/^"|"$/g, "").trim())
+          );
 
         const table = document.getElementById("sheetTable");
 
@@ -93,9 +127,10 @@
             const td = document.createElement("td");
             td.textContent = cell;
 
-            if (rowIndex === 0) td.className = "title";
-            if (colIndex === 1 && rowIndex > 0) td.classList.add("count");
-            if (colIndex === 3 && rowIndex > 0) td.classList.add("emoji");
+            if (colIndex === 0) td.className = "date";
+            if (colIndex === 1) td.className = "count";
+            if (colIndex === 2) td.className = "label";
+            if (colIndex === 3) td.className = "emoji";
 
             tr.appendChild(td);
           });
