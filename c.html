@@ -115,29 +115,35 @@ font-size:12px;
 <body>
 
 <div class="wrap">
+
 <div class="title">Oneminute 청소 스케줄</div>
+
 <table id="sheetTable"></table>
+
 <div class="note">
-예상 청소 건수이므로 변경될 수 있음. 최종확인 필수얌
+예상 청소 건수이므로 변경될 수 있음. 최종확인 필수
 </div>
+
 </div>
 
 <script>
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5USKZK-uEC6ayiKOzSLU9cCu-Mka_irBI-ihD5wJ3f7TNl9j_wDF4N1Wv63qbJNBGDoXQhC1Lf6ZG/gviz/tq?tqx=out:json&gid=0";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5USKZK-uEC6ayiKOzSLU9cCu-Mka_irBI-ihD5wJ3f7TNl9j_wDF4N1Wv63qbJNBGDoXQhC1Lf6ZG/pub?output=csv&gid=0";
 
 fetch(sheetUrl)
 .then(response => response.text())
-.then(text => {
-  const json = JSON.parse(text.substring(47).slice(0, -2));
-  const rows = json.table.rows;
+.then(csv => {
+  const rows = csv.trim().split("\n").map(row =>
+    row.split(",").map(cell => cell.replace(/^"|"$/g,"").trim())
+  );
+
   const table = document.getElementById("sheetTable");
 
   rows.forEach(row => {
     const tr = document.createElement("tr");
 
-    row.c.forEach((cell, colIndex) => {
+    row.forEach((cell, colIndex) => {
       const td = document.createElement("td");
-      td.textContent = cell ? cell.v : "";
+      td.textContent = cell;
 
       if(colIndex === 0) td.className = "date";
       if(colIndex === 1) td.className = "count";
